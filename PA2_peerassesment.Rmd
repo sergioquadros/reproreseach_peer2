@@ -274,7 +274,7 @@ grid.arrange(f1,f2,ncol=1, main = "Fatalities and Costs in 1996-2011 by Year")
 
 So the annual costs spread between `r format(min(by_year$total_costs),digits=3)` and `r format(max(by_year$total_costs),digits=3)` billions USD and their mean cost was `r format(mean(by_year$total_costs),digits=3)` $\pm $ `r format(sd(by_year$total_costs),digits=3)` billions USD.
 
-So the annual fatalities spread between `r format(min(by_year$deaths+by_year$hurts),digits=3)` and `r format(max(by_year$deaths+by_year$hurts),digits=3)` citizens and their mean was `r format(mean(by_year$deaths+by_year$hurts),digits=3)` $\pm $ `r format(sd(by_year$deaths+by_year$hurts),digits=3)` citizens.
+The annual fatalities spread between `r format(min(by_year$deaths+by_year$hurts),digits=3)` and `r format(max(by_year$deaths+by_year$hurts),digits=3)` citizens and their mean was `r format(mean(by_year$deaths+by_year$hurts),digits=3)` $\pm $ `r format(sd(by_year$deaths+by_year$hurts),digits=3)` citizens.
 
 
 ```{r final_time, results='hide'}
