@@ -2,7 +2,7 @@
 title: 'Severe Weather Events across USA from 1996 to 2011: The Ten Worst, Fatalities,
   Injuries and Costs'
 author: "Sérgio Quadros"
-date: "2015-01-20"
+date: "20-01-2015"
 output: html_document
 ---
 
@@ -36,25 +36,80 @@ Our data analysis must address the following questions:
 
 The document was produced with **R version 3.1.2 at a i686-pc-linux-gnu (32-bit) Ubuntu**, also we settled the local time -  _it shall be resettled at the end_ - and global options for knitr:  
 
-```{r setup,echo=TRUE, results='hide'}
+
+```r
 knitr::opts_chunk$set(echo=TRUE,cache=FALSE)
 local <- Sys.getlocale(category = "LC_TIME")
 Sys.setlocale("LC_TIME", "en_US.UTF-8")
 ```
 
 We called the following libraries:  
-```{r called_libraries, results='hide'}
+
+```r
 if(!library(RCurl, logical.return = TRUE)) install.packages("RCurl", dependencies=TRUE)
+```
+
+```
+## Loading required package: bitops
+```
+
+```r
 if(!library(knitr, logical.return = TRUE)) install.packages("knitr", dependencies=TRUE)
 if(!library(dplyr, logical.return = TRUE)) install.packages("dplyr", dependencies=TRUE)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+## 
+## The following object is masked from 'package:stats':
+## 
+##     filter
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 if(!library(tidyr, logical.return = TRUE)) install.packages("tidyr", dependencies=TRUE)
 if(!library(magrittr, logical.return = TRUE)) install.packages("magrittr", dependencies=TRUE)
+```
+
+```
+## 
+## Attaching package: 'magrittr'
+## 
+## The following object is masked from 'package:tidyr':
+## 
+##     extract
+```
+
+```r
 if(!library(lubridate, logical.return = TRUE)) install.packages("lubridate", dependencies=TRUE)
 if(!library(xtable, logical.return = TRUE)) install.packages("xtable", dependencies=TRUE)
 if(!library(ggplot2, logical.return = TRUE)) install.packages("ggplot2", dependencies=TRUE)
 if(!library(pracma, logical.return = TRUE)) install.packages("pracma", dependencies=TRUE)
-if(!library(gridExtra, logical.return = TRUE)) install.packages("gridExtra", dependencies=TRUE)
+```
 
+```
+## 
+## Attaching package: 'pracma'
+## 
+## The following objects are masked from 'package:magrittr':
+## 
+##     and, mod, or
+```
+
+```r
+if(!library(gridExtra, logical.return = TRUE)) install.packages("gridExtra", dependencies=TRUE)
+```
+
+```
+## Loading required package: grid
+```
+
+```r
 library(RCurl)
 library(knitr)
 library(dplyr)
@@ -75,7 +130,8 @@ There is also some documentation of the database available that we will find how
 
 *  National Climatic Data Center Storm Events [FAQ](https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2FNCDC%20Storm%20Events-FAQ%20Page.pdf).
 
-```{r download_unzip,results='hide'}
+
+```r
 url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
 spliturl   <- unlist(strsplit(url,"/|%2F"))
 zipfile    <- spliturl[length(spliturl)]
@@ -86,9 +142,9 @@ bzfile(description=zipfile, open = "rb", encoding = getOption("encoding"),compre
 datafile <- bzfile(zipfile)
 data1 <- tbl_df(read.csv(datafile))
 time <- format(Sys.time(),"%a %b %d %X %Y")
-```  
+```
 
-The current time is `r time`.  
+The current time is Mon Jan 26 11:14:51 PM 2015.  
 
 We decided to chose the following variables and our assumptions in absence of data's code book were based on the NOOA's report:
 
@@ -110,7 +166,8 @@ We decided to chose the following variables and our assumptions in absence of da
 
 We assumed that damage to the property is "propdmg" variable and they are multiplied by powers of ten with transformed "propdmgexp" variable, as well with crop's damage in "cropdmg" and "cropdmgexp" variables in accordance with [page 12](http://www.ncdc.noaa.gov/stormevents/pd01016005curr.pdf) of NOAA's report.
 
-```{r data_selected, results='hide'}
+
+```r
 colnames(data1) %<>% sapply(tolower)
 firstElement <- function(x){x[1]}
 data1$bgn_date %<>% as.character
@@ -154,9 +211,10 @@ data1$evtype %<>% as.factor
 evtype_number <- length(unique(data1$evtype))
 ```
 
-We got `r evtype_number` types of events with _gsub procedure_ and among them there are values that differed by having some adjectives, adverbs and white spaces that also eliminated and some abbreviations that were undone. Information lost on the one hand and on the other aggregate values that would otherwise be considered more appropriately similar.
+We got 275 types of events with _gsub procedure_ and among them there are values that differed by having some adjectives, adverbs and white spaces that also eliminated and some abbreviations that were undone. Information lost on the one hand and on the other aggregate values that would otherwise be considered more appropriately similar.
 
-```{r group_summaries}
+
+```r
 # Costs(billions USD) and Fatalities by Year: 1996 to 2011
 
 by_year <- data1 %>% 
@@ -176,7 +234,8 @@ by_eventype <- data1 %>%
 
 Initially we point out that the most frequent events in the sixteen years were not the ones who caused more deaths, injuries and losses. Below table shows the absolute cumulative frequency in these years according to the types of events and we can compare the following figure:
 
-```{r analaysis_data}
+
+```r
 # cumulative deaths, injuries, frequency, property damage, crop damage and
 # damage' sum by event type at '1996-2011' period.
 top_deathEV <- by_eventype %>% 
@@ -210,13 +269,14 @@ top_totalEV <- by_eventype %>%
 
 In the table below we see that the numbers are divided per thousand for each type of event in cumulative way at 1996-2011 period and so the most frequent were:
 
-| `r top_freqEV[1,1]`  | `r top_freqEV[2,1]` |`r top_freqEV[3,1]` |`r top_freqEV[4,1]` |`r top_freqEV[5,1]` |`r top_freqEV[6,1]` |`r top_freqEV[7,1]` |`r top_freqEV[8,1]` |`r top_freqEV[9,1]` |`r top_freqEV[10,1]` |
+| thunderstorm wind  | hail |flash flood |flood |tornado |high wind |snow |lightning |marine thunderstorm wind |rain |
 | ----- | ----- | ------ | ----- | ----- | ------ | ----- | ----- | ------ |------ |
-| `r top_freqEV[1,2]`  | `r top_freqEV[2,2]` |`r top_freqEV[3,2]` |`r top_freqEV[4,2]` |`r top_freqEV[5,2]` |`r top_freqEV[6,2]` |`r top_freqEV[7,2]` |`r top_freqEV[8,2]` |`r top_freqEV[9,2]` |`r top_freqEV[10,2]` |
+| 210.1  | 207.7 | 51.0 | 24.2 | 23.2 | 19.9 | 14.5 | 13.2 | 12.0 | 11.5 |
 
 Thus the most frequent types - thunderstorm wind, hail, flash flood, flood, tornado, high wind, snow, lightning, marine thunderstorm and rain - were not the ones who gave more damage and not those who caused more deaths - heat, tornado, flash flood, lightning, rip current, flood, thunderstorm wind, high wind, avalanche and winter storms - and those that more hurt was  tornado, heat, flood, thunderstorm wind, lightning,  flash flood, wild forest fire, hurricanes, winter storms and high wind as the following two graphs show in next panel. Tornadoes have injuried more than heat, but heat is more killer than tornadoes.
 
-```{r figure_1 by_eventype,fig.height=9}
+
+```r
 titulo1 <- "Event Types X Death" 
 p1 <- ggplot(top_deathEV,aes(reorder(evtype,deaths),deaths))+ coord_flip()+
         geom_bar(stat="identity")+xlab("Event Types")+ylab("Deaths")+
@@ -228,9 +288,12 @@ p2 <- ggplot(top_hurtEV,aes(reorder(evtype,hurts),hurts))+ coord_flip()+
 grid.arrange(p1,p2,ncol=1, main = "Cumulative Fatalities and Injuries: 1996-2011")
 ```
 
+![plot of chunk figure_1 by_eventype](figure/figure_1 by_eventype-1.png) 
+
 Property and crop damages are seen in following panel by event type and property damage to almost ten times higher than those crops. Ten worst types for properties are flood, hurricane, storm surge, tornado, flash flood, hail, thunderstorm wind, wild forest fire, tropical storm and high wind. Other ten worst types for cropies are: drought, hurricane, flood, hail, flash flood, extreme cold, frost freeze, thunderstorm wind, rain and tropical storm.
 
-```{r figure_2 by_eventype,fig.height=9,fig.width=7}
+
+```r
 titulo4 <- "Type X Property" 
 p4 <- ggplot(top_propertyEV,aes(reorder(evtype,property),property))+
         coord_flip()+geom_bar(stat="identity")+xlab("Event Types")+
@@ -249,10 +312,12 @@ p6 <- ggplot(top_totalEV,aes(reorder(evtype,total_costs),total_costs))+
 grid.arrange(p4,p5,p6,ncol=1, main = "Cumulative Costs in 1996-2011 by Event Types")
 ```
 
+![plot of chunk figure_2 by_eventype](figure/figure_2 by_eventype-1.png) 
+
 At last we got yearly costs for crop and properties in 1996-2011 period - 2005 and 2006 are more expensive years - at folowing panel, also the yearly causalities are figured out:
 
-```{r figure_3 by_year}
 
+```r
 # f1 by_year: x=date, y=(deaths, hurts)
 titulo7 <- "Fatalities X Year" 
 f1 <- ggplot(by_year,aes(date))+geom_line(aes(y = deaths, colour = "Death"))+
@@ -272,11 +337,14 @@ f2 <- ggplot(by_year,aes(date))+
 grid.arrange(f1,f2,ncol=1, main = "Fatalities and Costs in 1996-2011 by Year")
 ```
 
-So the annual costs spread between `r format(min(by_year$total_costs),digits=3)` and `r format(max(by_year$total_costs),digits=3)` billions USD and their mean cost was `r format(mean(by_year$total_costs),digits=3)` $\pm $ `r format(sd(by_year$total_costs),digits=3)` billions USD.
+![plot of chunk figure_3 by_year](figure/figure_3 by_year-1.png) 
 
-The annual fatalities spread between `r format(min(by_year$deaths+by_year$hurts),digits=3)` and `r format(max(by_year$deaths+by_year$hurts),digits=3)` citizens and their mean was `r format(mean(by_year$deaths+by_year$hurts),digits=3)` $\pm $ `r format(sd(by_year$deaths+by_year$hurts),digits=3)` citizens.
+So the annual costs spread between 5.51 and 125 billions USD and their mean cost was 25.1 $\pm $ 35.1 billions USD.
+
+The annual fatalities spread between 1687 and 11864 citizens and their mean was 4169 $\pm $ 2661 citizens.
 
 
-```{r final_time, results='hide'}
+
+```r
 Sys.setlocale("LC_TIME", local)
 ```
