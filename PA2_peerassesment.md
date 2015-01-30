@@ -288,7 +288,7 @@ p2 <- ggplot(top_hurtEV,aes(reorder(evtype,hurts),hurts))+ coord_flip()+
 grid.arrange(p1,p2,ncol=1, main = "Cumulative Fatalities and Injuries: 1996-2011")
 ```
 
-![plot of chunk figure_1 by_eventype](figure/figure_1 by_eventype-1.png) 
+![plot of chunk figure_1 by_eventype](figure/figure_1.png) 
 
 Property and crop damages are seen in following panel by event type and property damage to almost ten times higher than those crops. Ten worst types for properties are flood, hurricane, storm surge, tornado, flash flood, hail, thunderstorm wind, wild forest fire, tropical storm and high wind. Other ten worst types for cropies are: drought, hurricane, flood, hail, flash flood, extreme cold, frost freeze, thunderstorm wind, rain and tropical storm.
 
@@ -312,7 +312,7 @@ p6 <- ggplot(top_totalEV,aes(reorder(evtype,total_costs),total_costs))+
 grid.arrange(p4,p5,p6,ncol=1, main = "Cumulative Costs in 1996-2011 by Event Types")
 ```
 
-![plot of chunk figure_2 by_eventype](figure/figure_2 by_eventype-1.png) 
+![plot of chunk figure_2 by_eventype](figure/figure_2.png)
 
 At last we got yearly costs for crop and properties in 1996-2011 period - 2005 and 2006 are more expensive years - at folowing panel, also the yearly causalities are figured out:
 
@@ -337,7 +337,7 @@ f2 <- ggplot(by_year,aes(date))+
 grid.arrange(f1,f2,ncol=1, main = "Fatalities and Costs in 1996-2011 by Year")
 ```
 
-![plot of chunk figure_3 by_year](figure/figure_3 by_year-1.png) 
+![plot of chunk figure_3 by_year](figure/figure_3.png)
 
 So the annual costs spread between 5.51 and 125 billions USD and their mean cost was 25.1 $\pm $ 35.1 billions USD.
 
