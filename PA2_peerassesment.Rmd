@@ -139,25 +139,39 @@ new1 <- old
 new_ev <- data.frame(old,new1)
 new_ev$old %<>% as.character
 new_ev$new1 %<>% as.character
-no <-c("/","-","  ","agricultural","early","ligth","late","very","abnormally","abnormal","unseasonal","extreme","excessively","excessive","unseasonable","heavy","hard","strong","unseasonably","record","gusty","minor","moderate","monthly","unusually","unusual","dense","cstl flood erosion","tstm","strm","wnd","mud slide","coastalstorm","hurricane edouard","hurricane typhoon","typhoon","hurricane hurricane","wildfire","brush fire","coastal flood erosion","coastalflood","wintery mix","wintry mix","winter weather mix","fld","flooding","floodg","flood flood","prolonged","prolong","damaging","\\(g40\\)","\\(g35\\)","\\(g45\\)","\\(0.75\\)","45","\\(41\\)","g$","s$","\\(","thunderstorm wind and lightnin","erosion/cstl flood")
-yes <- c(" "," "," ","","","","","","","","","","","","","","","","","","","","","","","","","coastal flood","thunderstorm","stream","wind","mudslide","coastal storm","hurricane","hurricane","hurricane","hurricane","wild forest fire","wild forest fire","coastal flood","coastal flood","winter weather","winter weather","winter weather","flood","flood","flood","flood","","","","","","","","","","","","","thunderstorm wind","coastal flood")
-prolonged rain        rain
-215	prolong warmth	 warmth
+
+no <- c("(/|-|  )","(abnormally|abnormal|agricultural|damaging|dense|early|excessively|excessive|extremely|extreme|gusty|hard|heavy|late|ligth|minor|moderate|monthly|prolonged|prolong|record|strong|unseasonable|unseasonably|unseasonal|unusually|unusual|very)","tstm","strm","wnd","mud slide","coastalstorm","(hurricane edouard|hurricane typhoon|typhoon|hurricane hurricane)","(cstl flood erosion|coastal flood erosion|coastalflood|erosion/cstl flood)","(wildfire|brush fire)","(wintery mix|wintry mix|winter weather mix)","(fld|flooding|floodg|flood flood)","(g40|g35|g45|\\(0.75\\|40|45|41|\\)|\\()") 
+
+yes <- c(" ","","thunderstorm","stream","wind","mudslide","coastal storm","hurricane","coastal flood","wild forest fire","winter weather","flood","")
+
 exchange2 <- data.frame(no,yes)
 exchange2$no %<>% as.character
 exchange2$yes %<>% as.character
-for(k in 1:length(no)){
-        i <- grep(exchange2[k,1],new_ev$new1)
-        new_ev$new1[i] <- gsub(exchange2[k,1],exchange2[k,2],new_ev$new1[i])
-}
+for(h in 1:18){
+        for(k in 1:length(no)){
+                i <- grep(exchange2[k,1],new_ev$new1)
+                new_ev$new1[i] <- gsub(exchange2[k,1],exchange2[k,2],new_ev$new1[i])
+                }
+        new_ev$new1 <- str_trim(new_ev$new1, side = "both")
+        h <- h+1
+        }
+i <- grep("s$",new_ev$new1)
+new_ev$new1[i] <- gsub("s$","",new_ev$new1[i])
 new_ev$new1 <- str_trim(new_ev$new1, side = "both")
-# length(no)=length(yes)=56
+i <- grep(" g$",new_ev$new1)
+new_ev$new1[i] <- gsub(" g$","",new_ev$new1[i])
+new_ev$new1 <- str_trim(new_ev$new1, side = "both")
+# length(no)=length(yes)=13
 # problems with "[:digit:]" and "[:punct:]"
 
-data1 %<>% merge(new_ev,by.x="evtype",by.y="old")
+data1 %<>% merge(new_ev,by.x="evtype",by.y="old") %>%
+        select(-evtype) %>%
+                mutate(evtype=new1) %>%
+                        select(-new1)
+        
 
-data1$new1 %<>% as.factor
-evtype_number <- length(unique(data1$new1))
+data1$evtype %<>% as.factor
+evtype_number <- length(unique(new_ev$new1))
 ```
 
 We got `r evtype_number` types of events with _gsub procedure_ and among them there are values that differed by having some adjectives, adverbs and white spaces that also eliminated and some abbreviations that were undone. Information lost on the one hand and on the other aggregate values that would otherwise be considered more appropriately similar.
