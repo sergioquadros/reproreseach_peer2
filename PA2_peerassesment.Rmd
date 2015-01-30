@@ -2,8 +2,9 @@
 title: 'Severe Weather Events across USA from 1996 to 2011: The Ten Worst, Fatalities,
   Injuries and Costs'
 author: "Sérgio Quadros"
-date: "2015-01-20"
-output: html_document
+date: '2015-01-20'
+output:
+  html_document: default
 ---
 
 ## **Synopsis**
@@ -212,7 +213,7 @@ top_freqEV <- by_eventype %>%
                 arrange(desc(frequency)) %>% 
                         top_n(10,frequency)
 top_freqEV$frequency <- format(top_freqEV$frequency/1000,digits=3)
-        
+top_freqEV$frequency %<>% as.numeric         
 
 top_propertyEV <- by_eventype %>% 
         select(evtype,property) %>% 
@@ -228,24 +229,23 @@ top_totalEV <- by_eventype %>%
                         top_n(10,total_costs)
 ```
 
-In the table below we see that the numbers are divided per thousand for each type of event in cumulative way at 1996-2011 period and so the most frequent were:
-
-| `r top_freqEV[1,1]`  | `r top_freqEV[2,1]` |`r top_freqEV[3,1]` |`r top_freqEV[4,1]` |`r top_freqEV[5,1]` |`r top_freqEV[6,1]` |`r top_freqEV[7,1]` |`r top_freqEV[8,1]` |`r top_freqEV[9,1]` |`r top_freqEV[10,1]` |
-| ----- | ----- | ------ | ----- | ----- | ------ | ----- | ----- | ------ |------ |
-| `r top_freqEV[1,2]`  | `r top_freqEV[2,2]` |`r top_freqEV[3,2]` |`r top_freqEV[4,2]` |`r top_freqEV[5,2]` |`r top_freqEV[6,2]` |`r top_freqEV[7,2]` |`r top_freqEV[8,2]` |`r top_freqEV[9,2]` |`r top_freqEV[10,2]` |
-
-Thus the most frequent types - thunderstorm wind, hail, flash flood, flood, tornado, high wind, snow, lightning, marine thunderstorm and rain - were not the ones who gave more damage and not those who caused more deaths - heat, tornado, flash flood, lightning, rip current, flood, thunderstorm wind, high wind, avalanche and winter storms - and those that more hurt was  tornado, heat, flood, thunderstorm wind, lightning,  flash flood, wild forest fire, hurricanes, winter storms and high wind as the following two graphs show in next panel. Tornadoes have injuried more than heat, but heat is more killer than tornadoes.
-
-```{r figure_1 by_eventype,fig.height=9}
+Thus the most frequent types - thunderstorm wind, hail, flash flood, flood, tornado, high wind, snow, lightning, marine thunderstorm and rain - were not the ones who gave more damage and not those who caused more deaths - heat, tornado, flash flood, lightning, rip current, flood, thunderstorm wind, high wind, avalanche and winter storms - and those that more hurt was  tornado, heat, flood, thunderstorm wind, lightning,  flash flood, wild forest fire, hurricanes, winter storms and high wind as the following two graphs show in next panel. Tornadoes have injuried more than heat, but heat is more killer than tornadoes. See following 
+panel:
+```{r figure_1 by_eventype,fig.height=10,fig.width=7}
 titulo1 <- "Event Types X Death" 
 p1 <- ggplot(top_deathEV,aes(reorder(evtype,deaths),deaths))+ coord_flip()+
         geom_bar(stat="identity")+xlab("Event Types")+ylab("Deaths")+
-        ggtitle(titulo1)+theme_bw()+theme(axis.text.x = element_text(angle=90))
+        ggtitle(titulo1)+theme_bw()+theme(axis.text.x = element_text(angle=45))
 titulo2 <- "Event Types X Hurts" 
 p2 <- ggplot(top_hurtEV,aes(reorder(evtype,hurts),hurts))+ coord_flip()+
         geom_bar(stat="identity")+xlab("Event Types")+ylab("Hurts")+
-        ggtitle(titulo2)+theme_bw()+theme(axis.text.x = element_text(angle=90))
-grid.arrange(p1,p2,ncol=1, main = "Cumulative Fatalities and Injuries: 1996-2011")
+        ggtitle(titulo2)+theme_bw()+theme(axis.text.x = element_text(angle=45))
+titulo3 <- "Event Types X Frequency" 
+p3 <- ggplot(top_freqEV,aes(reorder(evtype,frequency),frequency))+
+        coord_flip()+geom_bar(stat="identity")+xlab("Event Types")+
+        ylab("Events' Frequency(x1000)")+ggtitle(titulo3)+ theme_bw()+
+        theme(axis.text.x = element_text(angle=45))
+grid.arrange(p1,p2,p3,ncol=1, main = "Cumulative Fatalities and Injuries: 1996-2011")
 ```
 
 Property and crop damages are seen in following panel by event type and property damage to almost ten times higher than those crops. Ten worst types for properties are flood, hurricane, storm surge, tornado, flash flood, hail, thunderstorm wind, wild forest fire, tropical storm and high wind. Other ten worst types for cropies are: drought, hurricane, flood, hail, flash flood, extreme cold, frost freeze, thunderstorm wind, rain and tropical storm.
@@ -255,17 +255,17 @@ titulo4 <- "Type X Property"
 p4 <- ggplot(top_propertyEV,aes(reorder(evtype,property),property))+
         coord_flip()+geom_bar(stat="identity")+xlab("Event Types")+
         ylab("Property Damage (billions USD)")+ggtitle(titulo4)+
-        theme_bw()+theme(axis.text.x = element_text(angle=90))
+        theme_bw()+theme(axis.text.x = element_text(angle=45))
 titulo5 <- "Type X Crop" 
 p5 <- ggplot(top_cropEV,aes(reorder(evtype,crop),crop))+coord_flip()+
         geom_bar(stat="identity")+xlab("Event Types")+
         ylab("Crop Damage (billions USD)")+ggtitle(titulo5)+
-        theme_bw()+theme(axis.text.x = element_text(angle=90))
+        theme_bw()+theme(axis.text.x = element_text(angle=45))
 titulo6 <- "Type X Total Costs" 
 p6 <- ggplot(top_totalEV,aes(reorder(evtype,total_costs),total_costs))+
         coord_flip()+geom_bar(stat="identity")+xlab("Event Types")+
         ylab("Total Costs (billions USD)")+ggtitle(titulo6)+
-        theme_bw()+theme(axis.text.x = element_text(angle=90))
+        theme_bw()+theme(axis.text.x = element_text(angle=45))
 grid.arrange(p4,p5,p6,ncol=1, main = "Cumulative Costs in 1996-2011 by Event Types")
 ```
 
@@ -278,7 +278,7 @@ titulo7 <- "Fatalities X Year"
 f1 <- ggplot(by_year,aes(date))+geom_line(aes(y = deaths, colour = "Death"))+
         geom_line(aes(y = hurts, colour = "Injury"))+xlab("Year")+ 
         ylab("Deaths and Injuries")+ ggtitle(titulo7)+
-        theme_bw()+theme(axis.text.x = element_text(angle=90))
+        theme_bw()+theme(axis.text.x = element_text(angle=45))
 
 # f2 by_year: x=date, y=(property, crop, total_costs, total_costs' model)
 titulo8 <- "Damage X Year" 
@@ -287,7 +287,7 @@ f2 <- ggplot(by_year,aes(date))+
         geom_line(aes(y = crop, colour = "Crop"))+
         geom_line(aes(y = total_costs, colour = "Total Costs"))+
         xlab("Year")+ylab("Damages (billions USD)")+ ggtitle(titulo8)+
-        theme_bw()+theme(axis.text.x = element_text(angle=90))
+        theme_bw()+theme(axis.text.x = element_text(angle=45))
 
 grid.arrange(f1,f2,ncol=1, main = "Fatalities and Costs in 1996-2011 by Year")
 ```
