@@ -50,9 +50,8 @@ if(!library(dplyr, logical.return = TRUE)) install.packages("dplyr", dependencie
 if(!library(tidyr, logical.return = TRUE)) install.packages("tidyr", dependencies=TRUE)
 if(!library(magrittr, logical.return = TRUE)) install.packages("magrittr", dependencies=TRUE)
 if(!library(lubridate, logical.return = TRUE)) install.packages("lubridate", dependencies=TRUE)
-if(!library(xtable, logical.return = TRUE)) install.packages("xtable", dependencies=TRUE)
+if(!library(stringr, logical.return = TRUE)) install.packages("stringr", dependencies=TRUE)
 if(!library(ggplot2, logical.return = TRUE)) install.packages("ggplot2", dependencies=TRUE)
-if(!library(pracma, logical.return = TRUE)) install.packages("pracma", dependencies=TRUE)
 if(!library(gridExtra, logical.return = TRUE)) install.packages("gridExtra", dependencies=TRUE)
 
 library(RCurl)
@@ -61,9 +60,8 @@ library(dplyr)
 library(tidyr)
 library(magrittr)
 library(lubridate)
-library(xtable)
+library(stringr)
 library(ggplot2)
-library(pracma)
 library(gridExtra)
 ```
 
@@ -131,27 +129,35 @@ data1 %<>% merge(exchange,by.x="propdmgexp",by.y="power_char") %>%
 data1 %<>% select(-propdmgexp,-power_int)
 data1 %<>% merge(exchange,by.x="cropdmgexp",by.y="power_char") %>%
                 mutate(cropdmg=cropdmg*10^power_int) 
-data1 %<>% select(-cropdmgexp,-power_int) 
-# making well formated values for evtype variable: GSUB PROCEDURE
+data1 %<>% select(-cropdmgexp,-power_int)
+
+# making well formated values for evtype variable with GSUB/GREP PROCEDURE by HAND
 data1$evtype %<>% tolower
-for(i in 1:20){
-        data1$evtype <- gsub("(hurricane edouard|hurricane typhoon|typhoon|hurricane hurricane)","hurricane",data1$evtype)
-        data1$evtype <- gsub("(wildfire|brush fire)","wild forest fire",data1$evtype)
-        data1$evtype <- gsub("tstm","thunderstorm",data1$evtype)
-        data1$evtype <- gsub("strm","stream",data1$evtype)
-        data1$evtype <- gsub("wnd","wind",data1$evtype)
-        data1$evtype <- gsub("mud slide","mudslide",data1$evtype)
-        data1$evtype <- gsub("coastalstorm","coastal storm",data1$evtype)
-        data1$evtype <- gsub("(coastal flood erosion|coastalflood)","coastal flood",data1$evtype)
-        data1$evtype <- gsub("(wintery mix|wintry mix|winter weather mix)","winter weather",data1$evtype)
-        data1$evtype <- gsub("(fld|flooding|floodg|flood flood)","flood",data1$evtype)
-        data1$evtype <- gsub("(agricultural|early|late|very|abnormally|abnormal|unseasonal|excessive|unseasonable|heavy|hard|unseasonably|record|gusty  |gusty |minor|moderate|monthly|unusual|dense|^ly )","",data1$evtype)
-        data1$evtype <- gsub("(/|-|  )"," ",data1$evtype)
-        data1$evtype <- gsub("(\\(|\\)|&|^  |^ |[Gg ][0-9]+$| $|s$|[Gg][0-9]+$|[0-9]+$|\\(0\\.75\\))","",data1$evtype)
-        i <- i+1
-        }
-data1$evtype %<>% as.factor
-evtype_number <- length(unique(data1$evtype))
+
+old <- unique(data1$evtype)
+new1 <- old
+new_ev <- data.frame(old,new1)
+new_ev$old %<>% as.character
+new_ev$new1 %<>% as.character
+no <-c("/","-","  ","agricultural","early","ligth","late","very","abnormally","abnormal","unseasonal","extreme","excessively","excessive","unseasonable","heavy","hard","strong","unseasonably","record","gusty","minor","moderate","monthly","unusually","unusual","dense","cstl flood erosion","tstm","strm","wnd","mud slide","coastalstorm","hurricane edouard","hurricane typhoon","typhoon","hurricane hurricane","wildfire","brush fire","coastal flood erosion","coastalflood","wintery mix","wintry mix","winter weather mix","fld","flooding","floodg","flood flood","prolonged","prolong","damaging","\\(g40\\)","\\(g35\\)","\\(g45\\)","\\(0.75\\)","45","\\(41\\)","g$","s$","\\(","thunderstorm wind and lightnin","erosion/cstl flood")
+yes <- c(" "," "," ","","","","","","","","","","","","","","","","","","","","","","","","","coastal flood","thunderstorm","stream","wind","mudslide","coastal storm","hurricane","hurricane","hurricane","hurricane","wild forest fire","wild forest fire","coastal flood","coastal flood","winter weather","winter weather","winter weather","flood","flood","flood","flood","","","","","","","","","","","","","thunderstorm wind","coastal flood")
+prolonged rain        rain
+215	prolong warmth	 warmth
+exchange2 <- data.frame(no,yes)
+exchange2$no %<>% as.character
+exchange2$yes %<>% as.character
+for(k in 1:length(no)){
+        i <- grep(exchange2[k,1],new_ev$new1)
+        new_ev$new1[i] <- gsub(exchange2[k,1],exchange2[k,2],new_ev$new1[i])
+}
+new_ev$new1 <- str_trim(new_ev$new1, side = "both")
+# length(no)=length(yes)=56
+# problems with "[:digit:]" and "[:punct:]"
+
+data1 %<>% merge(new_ev,by.x="evtype",by.y="old")
+
+data1$new1 %<>% as.factor
+evtype_number <- length(unique(data1$new1))
 ```
 
 We got `r evtype_number` types of events with _gsub procedure_ and among them there are values that differed by having some adjectives, adverbs and white spaces that also eliminated and some abbreviations that were undone. Information lost on the one hand and on the other aggregate values that would otherwise be considered more appropriately similar.
