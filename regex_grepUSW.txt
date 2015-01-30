@@ -20,14 +20,43 @@ Two types:
 
 Patterns are described here as they would be printed by cat: (do remember that backslashes need to be doubled when entering R character strings, e.g. from the keyboard). About this "old line\n new line" they are talking? No, metacharacter versus non-metacharacter...
 
-```{r cat}
-cat("(")
-cat("\\")
 
+```r
+cat("(")
+```
+
+```
+## (
+```
+
+```r
+cat("\\")
+```
+
+```
+## \
+```
+
+```r
 # cat("\(")
 ## Erro: '\('  é uma seqüência de escape não reconhecida na cadeia de caracteres começando com ""\("
 cat("a\nb\nc")
+```
+
+```
+## a
+## b
+## c
+```
+
+```r
 cat(paste(letters, 100* 1:26), fill = TRUE, labels = paste0("{", 1:10, "}:"))
+```
+
+```
+## {1}: a 100 b 200 c 300 d 400 e 500 f 600 g 700 h 800 i 900 j 1000 k 1100 
+## {2}: l 1200 m 1300 n 1400 o 1500 p 1600 q 1700 r 1800 s 1900 t 2000 u 2100 
+## {3}: v 2200 w 2300 x 2400 y 2500 z 2600
 ```
 
 Do not assume that **long** regular expressions will be accepted: the POSIX standard only requires up to 256 bytes. Maybe a cause for my grep's problems?
@@ -56,11 +85,30 @@ Metacharacter:
 
 *  _First char_ - _Last char_: hyphen in range of chars: [A-z]=[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz] Their interpretation is locale; [2-7]; usw.
 
-```{r some grep list}
+
+```r
 a <- c("123","234","345","456")
 grep("^[2-3]",a)
+```
+
+```
+## [1] 2 3
+```
+
+```r
 grep("^[5-8]",a)
+```
+
+```
+## integer(0)
+```
+
+```r
 grep("[1-3]$",a)
+```
+
+```
+## [1] 1
 ```
 
 *  Certain *named classes* of characters are predefined. Their interpretation depends on the locale (see locales); the interpretation below is that of the POSIX locale:
