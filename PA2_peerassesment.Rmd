@@ -85,6 +85,7 @@ bzfile(description=zipfile, open = "rb", encoding = getOption("encoding"),compre
 datafile <- bzfile(zipfile)
 data1 <- tbl_df(read.csv(datafile))
 time <- format(Sys.time(),"%a %b %d %X %Y")
+total_EVTYPE <- length(unique(data1$EVTYPE))
 ```  
 
 The current time is `r time`.  
@@ -117,8 +118,18 @@ y <- strsplit(data1$bgn_date, " ")
 data1$date  <- sapply(y, firstElement)
 data1$date %<>% mdy 
 data1$date %<>% year
-data1 %<>% filter(date > 1995)
+
+# notifications' policy in time line
+data0 <- select(data1,date,evtype)
+summary_holedata <- data0 %>%
+        group_by(date) %>%
+        summarise(sum_events=n(),sum_types=length(unique(evtype)))
+#summary_holedata$date %<>% as.factor
+        
+
+# making well formated values for evtype variable with GSUB/GREP PROCEDURE by HAND for date>1995
 # selecting our interest's variables
+data1 %<>% filter(date > 1995)
 data1 %<>%
         select(date,evtype,fatalities:cropdmgexp)
 data1$propdmgexp %<>% as.character
@@ -130,7 +141,6 @@ data1 %<>% select(-propdmgexp,-power_int)
 data1 %<>% merge(exchange,by.x="cropdmgexp",by.y="power_char") %>%
                 mutate(cropdmg=cropdmg*10^power_int) 
 data1 %<>% select(-cropdmgexp,-power_int)
-# making well formated values for evtype variable with GSUB/GREP PROCEDURE by HAND
 data1$evtype %<>% tolower
 old <- unique(data1$evtype)
 new1 <- old
@@ -167,7 +177,23 @@ data1$evtype %<>% as.factor
 evtype_number <- length(unique(new_ev$new1))
 ```
 
-We got `r evtype_number` types of events with _gsub procedure_ and among them there are values that differed by having some adjectives, adverbs and white spaces that also eliminated and some abbreviations that were undone. Information lost on the one hand and on the other aggregate values that would otherwise be considered more appropriately similar.
+We looked at number of events and number of types along the data set' time which was from `r min(data0$date)` to `r max(data0$date)` to discover how the agencies' policies was changed:
+
+```{r figure_policy}
+titulo_1 <- "Notifications by Year"
+q1 <- ggplot(summary_holedata,aes(date,sum_events/1000))+geom_path()+
+        geom_line(stats="identity")+ylab("Frequency(x 1000)")+ ggtitle(titulo_1)+
+        theme_bw()+theme(axis.text.x = element_text(angle=90))
+titulo_2 <- "Reported Types by Year"
+q2 <- ggplot(summary_holedata,aes(date,sum_types))+geom_path()+
+        geom_line(stats="identity")+xlab("Year")+ylab("Frequency")+ ggtitle(titulo_2)+
+        theme_bw()+theme(axis.text.x = element_text(angle=90))
+grid.arrange(q1,q2,ncol=1, main = "Reported Events and Their Types Yearly")
+```
+
+We emphasize that the yearly number of types of events spread between `r min(summary_holedata$sum_types)` and `r max(summary_holedata$sum_types)` and fell to 48 and this fall began at 1996. Also the annual total number of notifications ranged between `r min(summary_holedata$sum_events)` and `r max(summary_holedata$sum_events)` and it has been growing fast and independently of subtle changes in weather and that reflects the new policies of government agencies.
+
+Thus we selected the observations made from 1996 because new strategy of NOOA that proposed to standardize the types of events and increase the number of observations. Another filter was the _gsub procedure_ which got `r evtype_number` types of events at 1996-2011 period that was compared with all `r total_EVTYPE` types at 1950-2011. The _gsub procedure_ selected types by elimination of some adjectives, adverbs and white spaces and some abbreviations that were undone among values of EVTYPE. We lost some information, but we joined what was really similar.
 
 ```{r group_summaries}
 # Costs(billions USD) and Fatalities by Year: 1996 to 2011
