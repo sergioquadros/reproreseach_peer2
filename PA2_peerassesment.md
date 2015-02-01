@@ -11,13 +11,13 @@ output:
 
 The annual costs of the ten worst weather events spread between 5.51 and 125 billions USD at 1996-2011 period and the yearly fatalities spread between 1687 and 11864 citizens.
 
-The ten worst events that caused more deaths was heat, tornado, flash flood, lightning, rip current, flood, thunderstorm wind, high wind, avalanche and winter storms and those that more hurt was  tornado, heat, flood, thunderstorm wind, lightning,  flash flood, wild forest fire, hurricanes, winter storms and high wind.
+The ten worst events that caused more deaths was heat, tornado, flash flood, lightning, rip current, flood, thunderstorm wind, high wind, avalanche and cold wind chill and those that more hurt was  tornado, heat, flood, thunderstorm wind, lightning,  flash flood, wild forest fire, hurricane, winter storms and high wind.
 
 The property damages were by event type almost ten times higher than those crops. Ten worst types for properties were flood, hurricane, storm surge, tornado, flash flood, hail, thunderstorm wind, wild forest fire, tropical storm and high wind. 
 
-Other ten worst types for cropies were: drought, hurricane, flood, hail, flash flood, extreme cold, frost freeze, thunderstorm wind, rain and tropical storm.
+Other ten worst types for cropies were: drought, hurricane, flood, hail, cold, flash flood, frost freeze, thunderstorm wind, rain and tropical storm.
 
-Of course the most frequent events may not be neither the most fatal nor that bring higher losses and therefore not serve as a compass for government action.
+Of course the most frequent events may not be neither the most fatal nor that bring higher losses and therefore don't serve as a compass for government action.
 
 The North American citizens should be prepared to meet these challenges and agencies of interest in this area should continue its efforts to standardize your records and make them public. This work will give climate predictions more accurate, saving lives and wealth.
 
@@ -98,7 +98,7 @@ time <- format(Sys.time(),"%a %b %d %X %Y")
 total_EVTYPE <- length(unique(data1$EVTYPE))
 ```
 
-The current time is Sat Jan 31 04:52:40 PM 2015.  
+The current time is Sun Feb 01 02:05:18 PM 2015.  
 
 We decided to chose the following variables and our assumptions in absence of data's code book were based on the NOOA's report:
 
@@ -195,11 +195,11 @@ We looked at number of events and number of types along the data set' time which
 titulo_1 <- "Notifications by Year"
 q1 <- ggplot(summary_holedata,aes(date,sum_events/1000))+geom_path()+
         geom_line(stats="identity")+ylab("Frequency(x 1000)")+ ggtitle(titulo_1)+
-        theme_bw()+theme(axis.text.x = element_text(angle=90))
+        theme_bw()+theme(axis.text.x = element_text(angle=45))
 titulo_2 <- "Reported Types by Year"
 q2 <- ggplot(summary_holedata,aes(date,sum_types))+geom_path()+
         geom_line(stats="identity")+xlab("Year")+ylab("Frequency")+ ggtitle(titulo_2)+
-        theme_bw()+theme(axis.text.x = element_text(angle=90))
+        theme_bw()+theme(axis.text.x = element_text(angle=45))
 grid.arrange(q1,q2,ncol=1, main = "Reported Events and Their Types Yearly")
 ```
 
@@ -227,7 +227,7 @@ by_eventype <- data1 %>%
 
 ## **Results**
 
-Initially we point out that the most frequent events in the sixteen years were not the ones who caused more deaths, injuries and losses. Below table shows the absolute cumulative frequency in these years according to the types of events and we can compare the following figure:
+Initially we point out that the most frequent events in the sixteen years were not the ones who caused more deaths, injuries and losses. The next panel presents shows the relative frequency of the types of events at this period:
 
 
 ```r
@@ -262,7 +262,11 @@ top_totalEV <- by_eventype %>%
                         top_n(10,total_costs)
 ```
 
-Thus the ten most frequent types corresponds to 89.9% of notifications in 1996-2011 period: thunderstorm wind, hail, flash flood, flood, tornado, high wind, snow, lightning, marine thunderstorm and rain. They were not the ones who gave more damage and not those who caused more deaths - heat, tornado, flash flood, lightning, rip current, flood, thunderstorm wind, high wind, avalanche and winter storms - and those that more hurt was  tornado, heat, flood, thunderstorm wind, lightning,  flash flood, wild forest fire, hurricanes, winter storms and high wind as the following two graphs show in next panel. Tornadoes have injuried more than heat, but heat is more killer than tornadoes. See following panel:
+Thus the ten most frequent types corresponds to 89.9% of notifications in 1996-2011 period: thunderstorm wind, hail, flash flood, flood, tornado, high wind, snow, lightning, marine thunderstorm and rain. They were not the ones who gave more damage and not those who caused more deaths and those that more hurt.
+
+The most ten killers: heat, tornado, flash flood, lightning, rip current, flood, thunderstorm wind, high wind, avalanche and cold wind chill.
+
+The most ten hurters: tornado, heat, flood, thunderstorm wind, lightning,  flash flood, wild forest fire, hurricane, winter storm and high wind as the following two graphs show in next panel. Tornadoes have injuried more than heat, but heat is more killer than tornadoes. See following panel:
 
 
 ```r
@@ -284,7 +288,7 @@ grid.arrange(p1,p2,p3,ncol=1, main = "Cumulative Fatalities and Injuries: 1996-2
 
 ![plot of chunk figure_1 by_eventype](figure/figure_1 by_eventype-1.png) 
 
-Property and crop damages are seen in following panel by event type and property damage to almost ten times higher than those crops. Ten worst types for properties are flood, hurricane, storm surge, tornado, flash flood, hail, thunderstorm wind, wild forest fire, tropical storm and high wind. Other ten worst types for cropies are: drought, hurricane, flood, hail, flash flood, extreme cold, frost freeze, thunderstorm wind, rain and tropical storm.
+Property and crop damages are seen in following panel by event type and property damage to almost ten times higher than those crops. Ten worst types for properties are flood, hurricane, storm surge, tornado, flash flood, hail, thunderstorm wind, wild forest fire, tropical storm and high wind. Other ten worst types for cropies are: drought, hurricane, flood, hail, cold, flash flood, frost freeze, thunderstorm wind, rain and tropical storm.
 
 
 ```r
