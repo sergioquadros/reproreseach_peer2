@@ -118,15 +118,11 @@ y <- strsplit(data1$bgn_date, " ")
 data1$date  <- sapply(y, firstElement)
 data1$date %<>% mdy 
 data1$date %<>% year
-
 # notifications' policy in time line
 data0 <- select(data1,date,evtype)
 summary_holedata <- data0 %>%
         group_by(date) %>%
         summarise(sum_events=n(),sum_types=length(unique(evtype)))
-#summary_holedata$date %<>% as.factor
-        
-
 # making well formated values for evtype variable with GSUB/GREP PROCEDURE by HAND for date>1995
 # selecting our interest's variables
 data1 %<>% filter(date > 1995)
@@ -147,7 +143,6 @@ new1 <- old
 new_ev <- data.frame(old,new1)
 new_ev$old %<>% as.character
 new_ev$new1 %<>% as.character
-
 no <- c("(/|-|  )","(abnormally|abnormal|agricultural|damaging|dense|early|excessively|excessive|extremely|extreme|gusty|hard|heavy|late|ligth|minor|moderate|monthly|prolonged|prolong|record|strong|unseasonable|unseasonably|unseasonal|unusually|unusual|very)","tstm","strm","wnd","mud slide","coastalstorm","(hurricane edouard|hurricane typhoon|typhoon|hurricane hurricane)","(cstl flood erosion|coastal flood erosion|coastalflood|erosion/cstl flood)","(wildfire|brush fire)","(wintery mix|wintry mix|winter weather mix)","(fld|flooding|floodg|flood flood)","(g40|g35|g45|\\(0.75\\|40|45|41|\\)|\\()") 
 yes <- c(" ","","thunderstorm","stream","wind","mudslide","coastal storm","hurricane","coastal flood","wild forest fire","winter weather","flood","")
 exchange2 <- data.frame(no,yes)

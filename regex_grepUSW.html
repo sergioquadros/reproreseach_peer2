@@ -291,11 +291,84 @@ grep(&quot;^[2-3]&quot;,a)
 <pre><code>## [1] 1
 </code></pre>
 
+<pre><code class="r">aa &lt;- c(&quot;1&gt;23&quot;,&quot;2c.34&quot;,&quot;34b:5&quot;,&quot;45a/6&quot;)
+aa
+</code></pre>
+
+<pre><code>## [1] &quot;1&gt;23&quot;  &quot;2c.34&quot; &quot;34b:5&quot; &quot;45a/6&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[[:alnum:]]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;&gt;&quot; &quot;.&quot; &quot;:&quot; &quot;/&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[:alnum:]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;1&gt;23&quot;  &quot;2c.34&quot; &quot;34b5&quot;  &quot;45/6&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[[:digit:]]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;&gt;&quot;  &quot;c.&quot; &quot;b:&quot; &quot;a/&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[:digit:]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;1&gt;23&quot;  &quot;2c.34&quot; &quot;34b5&quot;  &quot;45a/6&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[[:punct:]]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;123&quot;  &quot;2c34&quot; &quot;34b5&quot; &quot;45a6&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[:punct:]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;1&gt;23&quot;  &quot;2.34&quot;  &quot;34b5&quot;  &quot;45a/6&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[[:alpha:]]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;1&gt;23&quot; &quot;2.34&quot; &quot;34:5&quot; &quot;45/6&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[:alpha:]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;1&gt;23&quot;  &quot;2c.34&quot; &quot;34b5&quot;  &quot;45/6&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[[a:z]]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;1&gt;23&quot;  &quot;2c.34&quot; &quot;34b:5&quot; &quot;45a/6&quot;
+</code></pre>
+
+<pre><code class="r">gsub(&quot;[a:z]&quot;,&quot;&quot;,aa)
+</code></pre>
+
+<pre><code>## [1] &quot;1&gt;23&quot;  &quot;2c.34&quot; &quot;34b5&quot;  &quot;45/6&quot;
+</code></pre>
+
+<pre><code class="r">Sys.setlocale()# key hint
+</code></pre>
+
+<pre><code>## [1] &quot;LC_CTYPE=pt_BR.UTF-8;LC_NUMERIC=C;LC_TIME=pt_BR.UTF-8;LC_COLLATE=pt_BR.UTF-8;LC_MONETARY=pt_BR.UTF-8;LC_MESSAGES=pt_BR.UTF-8;LC_PAPER=pt_BR.UTF-8;LC_NAME=C;LC_ADDRESS=C;LC_TELEPHONE=C;LC_MEASUREMENT=pt_BR.UTF-8;LC_IDENTIFICATION=C&quot;
+</code></pre>
+
 <ul>
 <li><p>Certain <em>named classes</em> of characters are predefined. Their interpretation depends on the locale (see locales); the interpretation below is that of the POSIX locale:</p>
 
 <ul>
-<li> Alphanumeric characters: [:alnum:] = [:alpha:] and [:digit:]; [[:alnum:]] that is independent of locale and character encoding, otherwise [0-9A-Za-z] depends upon the locale and the character encoding</li>
+<li> Alphanumeric characters: [:alnum:] = [:alpha:] and [:digit:]; [[:alnum:]] that is independent of locale and character encoding, otherwise [0-9A-Za-z] depends upon the locale and the character encoding. They worked with double square brackets  well.</li>
 <li> Alphabetic characters: [:alpha:]</li>
 <li> Digits: 0 1 2 3 4 5 6 7 8 9 = [:digit:]</li>
 <li> Blank characters: space and tab, and possibly other locale-dependent characters such as non-breaking space = [:blank:]</li>
@@ -345,55 +418,27 @@ grep(&quot;^[2-3]&quot;,a)
 
 <p>The backreference \N, where N = 1 &hellip; 9, matches the substring previously matched by the Nth parenthesized subexpression of the regular expression. (This is an extension for extended regular expressions: POSIX defines them only for basic ones.)</p>
 
-<h3>Perl-like Regular Expressions</h3>
+<h3>PCRE - Perl Compatible Regular Expressions</h3>
 
-<p>The perl = TRUE argument to grep, regexpr, gregexpr, sub, gsub and strsplit switches to the PCRE library that implements regular expression pattern matching using the same syntax and semantics as Perl 5.10, with just a few differences.</p>
+<p>The perl = TRUE argument to grep, regexpr, gregexpr, sub, gsub and strsplit switches to the PCRE library that implements regular expression pattern matching using the same syntax and semantics as Perl 5.10, with just a few differences. <em>Not yet</em></p>
 
-<p>For complete details please consult the man pages for PCRE, especially man pcrepattern and man pcreapi), on your system or from the sources at <a href="http://www.pcre.org">http://www.pcre.org</a>. If PCRE support was compiled from the sources within R, the PCRE version is 8.12 as described here.</p>
-
-<p>Perl regular expressions can be computed byte-by-byte or (UTF-8) character-by-character: the latter is used in all multibyte locales and if any of the inputs are marked as UTF-8 (see Encoding).</p>
-
-<p>All the regular expressions described for extended regular expressions are accepted except &lt; and &gt;: in Perl all backslashed metacharacters are alphanumeric and backslashed symbols always are interpreted as a literal character. { is not special if it would be the start of an invalid interval specification. There can be more than 9 backreferences (but the replacement in sub can only refer to the first 9).</p>
-
-<p>Character ranges are interpreted in the numerical order of the characters, either as bytes in a single-byte locale or as Unicode code points in UTF-8 mode. So in either case [A-Za-z] specifies the set of ASCII letters.</p>
+<p>For complete details please consult the man pages for PCRE, especially man pcrepattern and man pcreapi), on your system or from the sources at <a href="http://www.pcre.org">http://www.pcre.org</a>. </p>
 
 <p>In UTF-8 mode the named character classes only match ASCII characters: see \p below for an alternative.</p>
-
-<p>The construct (?&hellip;) is used for Perl extensions in a variety of ways depending on what immediately follows the ?.</p>
-
-<p>Perl-like matching can work in several modes, set by the options (?i) (caseless, equivalent to Perl&#39;s /i), (?m) (multiline, equivalent to Perl&#39;s /m), (?s) (single line, so a dot matches all characters, even new lines: equivalent to Perl&#39;s /s) and (?x) (extended, whitespace data characters are ignored unless escaped and comments are allowed: equivalent to Perl&#39;s /x). These can be concatenated, so for example, (?im) sets caseless multiline matching. It is also possible to unset these options by preceding the letter with a hyphen, and to combine setting and unsetting such as (?im-sx). These settings can be applied within patterns, and then apply to the remainder of the pattern. Additional options not in Perl include (?U) to set ‘ungreedy’ mode (so matching is minimal unless ? is used as part of the repetition quantifier, when it is greedy). Initially none of these options are set.</p>
-
-<p>If you want to remove the special meaning from a sequence of characters, you can do so by putting them between \Q and \E. This is different from Perl in that $ and @ are handled as literals in \Q&hellip;\E sequences in PCRE, whereas in Perl, $ and @ cause variable interpolation.</p>
-
-<p>The escape sequences \d, \s and \w represent any decimal digit, space character and ‘word’ character (letter, digit or underscore in the current locale: in UTF-8 mode only ASCII letters and digits are considered) respectively, and their upper-case versions represent their negation. Vertical tab is not regarded as a space character before PCRE 8.34 (included in R 3.0.3). Sequences \h, \v, \H and \V match horizontal and vertical space or the negation. (In UTF-8 mode, these do match non-ASCII Unicode code points.)</p>
-
-<p>There are additional escape sequences: \cx is cntrl-x for any x, \ddd is the octal character (for up to three digits unless interpretable as a backreference, as \1 to \7 always are), and \xhh specifies a character by two hex digits. In a UTF-8 locale, \x{h&hellip;} specifies a Unicode code point by one or more hex digits. (Note that some of these will be interpreted by R&#39;s parser in literal character strings.)</p>
-
-<p>Outside a character class, \A matches at the start of a subject (even in multiline mode, unlike <sup>),</sup> \Z matches at the end of a subject or before a newline at the end, \z matches only at end of a subject. and \G matches at first matching position in a subject (which is subtly different from Perl&#39;s end of the previous match). \C matches a single byte, including a newline, but its use is warned against. In UTF-8 mode, \R matches any Unicode newline character (not just CR), and \X matches any number of Unicode characters that form an extended Unicode sequence.</p>
-
-<p>In UTF-8 mode, some Unicode properties are supported via \p{xx} and \P{xx} which match characters with and without property xx respectively. For a list of supported properties see the PCRE documentation, but for example Lu is ‘upper case letter’ and Sc is ‘currency symbol’.</p>
-
-<p>The sequence (?# marks the start of a comment which continues up to the next closing parenthesis. Nested parentheses are not permitted. The characters that make up a comment play no part at all in the pattern matching.</p>
-
-<p>If the extended option is set, an unescaped # character outside a character class introduces a comment that continues up to the next newline character in the pattern.</p>
-
-<p>The pattern (?:&hellip;) groups characters just as parentheses do but does not make a backreference.</p>
-
-<p>Patterns (?=&hellip;) and (?!&hellip;) are zero-width positive and negative lookahead assertions: they match if an attempt to match the &hellip; forward from the current position would succeed (or not), but use up no characters in the string being processed. Patterns (?&lt;=&hellip;) and (?&lt;!&hellip;) are the lookbehind equivalents: they do not allow repetition quantifiers nor \C in &hellip;.</p>
 
 <p>regexpr and gregexpr support ‘named capture’. If groups are named, e.g., &rdquo;(?<first>[A-Z][a-z]+)&ldquo; then the positions of the matches are also returned by name. (Named backreferences are not supported by sub.)</p>
 
 <p>Atomic grouping, possessive qualifiers and conditional and recursive patterns are not covered here.</p>
 
-<p>Author(s)</p>
+<h4><em>Author(s)-&gt;from R Documentation</em></h4>
 
 <p>This help page is based on the documentation of GNU grep 2.4.2, the TRE documentation and the POSIX standard, and the pcrepattern man page from PCRE 8.0.</p>
 
-<p>See Also</p>
+<p><em>See Also</em></p>
 
-<p>grep, apropos, browseEnv, glob2rx, help.search, list.files, ls and strsplit.</p>
+<p><em>grep, apropos, browseEnv, glob2rx, help.search, list.files, ls and strsplit.</em></p>
 
-<p>The TRE documentation at <a href="http://laurikari.net/tre/documentation/regex-syntax/">http://laurikari.net/tre/documentation/regex-syntax/</a>).</p>
+<p><em>GREAT</em>: The TRE documentation at <a href="http://laurikari.net/tre/documentation/regex-syntax/">http://laurikari.net/tre/documentation/regex-syntax/</a>).</p>
 
 <p>The POSIX 1003.2 standard at <a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap09.html#tag_09">http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap09.html#tag_09</a></p>
 
